@@ -1,18 +1,24 @@
 const mongoose = require("mongoose");
 
-const interviewSessionSchem = mongoose.Schema({
-  candidateName: {
-    type: String,
-    required: true,
+const interviewSessionSchem = mongoose.Schema(
+  {
+    candidateName: {
+      type: String,
+      required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-},{timeStamp:true});
+  {
+    timestamps: true,
+  }
+);
 
-
-
-const InterviewSession = mongoose.model("InterviewSession", interviewSessionSchem);
+const InterviewSession = mongoose.model(
+  "InterviewSession",
+  interviewSessionSchem
+);
 
 module.exports = InterviewSession;

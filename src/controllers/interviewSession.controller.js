@@ -4,8 +4,16 @@ const InterviewSession = require("../models/interviewSession");
 exports.createInterviewSession = async (req, res) => {
   try {
     const { candidateName } = req.body;
-    if (!candidateName ) {
+    if (!candidateName) {
       return res.status(400).json({ message: "Missing required fields" });
+    }
+    const existingInterviewSession = await InterviewSession.findOne({
+      candidateName,
+    });
+    if (existingInterviewSession) {
+      return res
+        .status(400)
+        .json({ message: "Interview session already exists" });
     }
     const newInterviewSession = new InterviewSession(req.body);
     await newInterviewSession.save();
@@ -61,10 +69,9 @@ exports.updateInterviewSessionById = async (req, res) => {
 
 exports.updateInterviewSessionStatus = async (req, res) => {
   try {
-
     const interviewSession = await InterviewSession.findByIdAndUpdate(
       req.params.id,
-      { isActive: false},
+      { isActive: false },
       { new: true }
     );
 
@@ -80,16 +87,20 @@ exports.updateInterviewSessionStatus = async (req, res) => {
       interviewSession,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error updating interviewSession", error });
+    res.status(500).json({
+      success: false,
+      message: "Error updating interviewSession",
+      error,
+    });
   }
 };
 
 // Endpoint to delete a specific interviewSession by ID
 exports.deleteInterviewSessionById = async (req, res) => {
   try {
-    const deletedInterviewSession = await InterviewSession.findByIdAndDelete(req.params.id);
+    const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
+      req.params.id
+    );
     if (!deletedInterviewSession) {
       return res.status(404).json({ message: "InterviewSession not found" });
     }

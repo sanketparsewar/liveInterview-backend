@@ -3,13 +3,13 @@ const ChallengeSession = require("../models/challengeSession");
 // Endpoint to create a new challengeSession
 exports.createChallengeSession = async (req, res) => {
   try {
-    const { interviewSessionId,stackBlitzUrl } = req.body;
-    if (!interviewSessionId || !stackBlitzUrl ) {
+    const { interviewSessionId, stackBlitzUrl, name } = req.body;
+    if (!interviewSessionId || !stackBlitzUrl || !name) {
       return res.status(400).json({ message: "Missing required fields" });
     }
     const newChallengeSession = new ChallengeSession(req.body);
     await newChallengeSession.save();
-    res.status(201).json({ newChallengeSession });
+    res.status(201).json( newChallengeSession );
   } catch (error) {
     res.status(500).json({ message: "Error saving challengeSession" });
   }
@@ -18,7 +18,9 @@ exports.createChallengeSession = async (req, res) => {
 // Endpoint to get all challengeSessions
 exports.getAllChallengeSessions = async (req, res) => {
   try {
-    const challengeSessions = await ChallengeSession.find().populate("interviewSessionId");
+    const challengeSessions = await ChallengeSession.find().populate(
+      "interviewSessionId"
+    );
     if (!challengeSessions) {
       return res.status(404).json({ message: "No challengeSessions found" });
     }
@@ -32,7 +34,9 @@ exports.getAllChallengeSessions = async (req, res) => {
 // Endpoint to get a specific challengeSession by ID
 exports.getChallengeSessionById = async (req, res) => {
   try {
-    const challengeSession = await ChallengeSession.findById(req.params.id).populate("interviewSessionId");
+    const challengeSession = await ChallengeSession.findById(
+      req.params.id
+    ).populate("interviewSessionId");
     if (!challengeSession) {
       return res.status(404).json({ message: "ChallengeSession not found" });
     }
@@ -83,14 +87,20 @@ exports.updateChallengeSessionStatus = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, message: "Error updating challengeSession", error });
+      .json({
+        success: false,
+        message: "Error updating challengeSession",
+        error,
+      });
   }
 };
 
 // Endpoint to delete a specific challengeSession by ID
 exports.deleteChallengeSessionById = async (req, res) => {
   try {
-    const deletedChallengeSession = await ChallengeSession.findByIdAndDelete(req.params.id);
+    const deletedChallengeSession = await ChallengeSession.findByIdAndDelete(
+      req.params.id
+    );
     if (!deletedChallengeSession) {
       return res.status(404).json({ message: "ChallengeSession not found" });
     }

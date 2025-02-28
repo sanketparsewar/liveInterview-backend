@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const challengeSessionSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     interviewSessionId: {
       type: String,
       required: true,
@@ -33,7 +37,9 @@ const challengeSessionSchema = mongoose.Schema(
       default: null,
     },
   },
-  { timestamp: true }
+  {
+    timestamps: true,
+  }
 );
 
 const ChallengeSession = mongoose.model("Session", challengeSessionSchema);
