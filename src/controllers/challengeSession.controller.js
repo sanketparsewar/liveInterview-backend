@@ -9,9 +9,9 @@ exports.createChallengeSession = async (req, res) => {
     }
     const newChallengeSession = new ChallengeSession(req.body);
     await newChallengeSession.save();
-    res.status(201).json( newChallengeSession );
+    res.status(201).json(newChallengeSession);
   } catch (error) {
-    res.status(500).json({ message: "Error saving challengeSession" });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -24,7 +24,6 @@ exports.getAllChallengeSessions = async (req, res) => {
     if (!challengeSessions) {
       return res.status(404).json({ message: "No challengeSessions found" });
     }
-    console.log(challengeSessions);
     res.status(200).json({ challengeSessions });
   } catch (error) {
     res.status(404).json({ message: "No challengeSessions found" });
@@ -34,13 +33,36 @@ exports.getAllChallengeSessions = async (req, res) => {
 // Endpoint to get a specific challengeSession by ID
 exports.getChallengeSessionById = async (req, res) => {
   try {
-    const challengeSession = await ChallengeSession.findById(
-      req.params.id
-    ).populate("interviewSessionId");
+    const challengeSession = await ChallengeSession.findById(req.params.id);
+
+    if (!challengeSession) {
+      return res.status(404).json({ message: "Challenge session not found" });
+    }
+
+    if (!challengeSession.isActive) {
+      const filteredChallengeSession = await ChallengeSession.findById(req.params.id)
+        .select("-stackBlitzUrl");
+      return res.status(200).json(filteredChallengeSession);
+    }
+
     if (!challengeSession) {
       return res.status(404).json({ message: "ChallengeSession not found" });
     }
-    res.status(200).json({ challengeSession });
+    res.status(200).json(challengeSession);
+  } catch (error) {
+    res.status(404).json({ message: "No challengeSessions found" });
+  }
+};
+
+exports.getChallengeSessionsByInterviewId = async (req, res) => {
+  try {
+    const challengeSessions = await ChallengeSession.find({
+      interviewSessionId: req.params.id,
+    });
+    if (!challengeSessions) {
+      return res.status(404).json({ message: "No challengeSessions found" });
+    }
+    res.status(200).json({ challengeSessions });
   } catch (error) {
     res.status(404).json({ message: "No challengeSessions found" });
   }
@@ -63,13 +85,11 @@ exports.updateChallengeSessionById = async (req, res) => {
   }
 };
 
-exports.updateChallengeSessionStatus = async (req, res) => {
+exports.startChallenge = async (req, res) => {
   try {
-    // const { isActive, challengeSessionStatus } = req.body;
-
     const challengeSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
-      { isActive: false, challengeSessionStatus: "Completed" },
+      { isActive: true, challengeSessionStatus: "In-progress", startTime: Date.now() },
       { new: true }
     );
 
@@ -81,17 +101,53 @@ exports.updateChallengeSessionStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "ChallengeSession updated successfully",
-      challengeSession,
+      message: "ChallengeSession started successfully",
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error updating challengeSession",
-        error,
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+exports.updateChallengeSessionStatus = async (req, res) => {
+  try {
+
+    // const challengeSession = await ChallengeSession.findByIdAndUpdate(
+    //   req.params.id,
+    //   { isActive: false, challengeSessionStatus: "Completed", endTime: Date.now() },
+    //   { new: true }
+    // );
+    const challengeSession = await ChallengeSession.findById(req.params.id);
+
+    if (!challengeSession) {
+      return res.status(404).json({ message: "Challenge session not found" });
+    }
+
+    const endTime = Date.now();
+    const totalTime = (endTime - challengeSession.startTime) / (1000 * 60); // Convert ms to seconds
+
+    const updatedSession = await ChallengeSession.findByIdAndUpdate(
+      req.params.id,
+      {
+        isActive: false,
+        challengeSessionStatus: "Completed",
+        endTime: endTime,
+        totalTime: totalTime, // Store time in minutes
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "ChallengeSession updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
