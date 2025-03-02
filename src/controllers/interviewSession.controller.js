@@ -3,8 +3,8 @@ const InterviewSession = require("../models/interviewSession");
 // Endpoint to create a new interviewSession
 exports.createInterviewSession = async (req, res) => {
   try {
-    const { candidateName } = req.body;
-    if (!candidateName) {
+    const { interviewerName,candidateName } = req.body;
+    if (!interviewerName | !candidateName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
     const existingInterviewSession = await InterviewSession.findOne({
@@ -19,18 +19,17 @@ exports.createInterviewSession = async (req, res) => {
     await newInterviewSession.save();
     res.status(201).json({ newInterviewSession });
   } catch (error) {
-    res.status(500).json({ message: "Error saving interviewSession" });
+    res.status(500).json({ message: error.message });
   }
 };
 
 // Endpoint to get all interviewSessions
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    const interviewSessions = await InterviewSession.find();
+    const interviewSessions = await InterviewSession.find().sort({ createdAt: -1 });
     if (!interviewSessions) {
       return res.status(404).json({ message: "No interviewSessions found" });
     }
-    console.log(interviewSessions);
     res.status(200).json({ interviewSessions });
   } catch (error) {
     res.status(404).json({ message: "No interviewSessions found" });

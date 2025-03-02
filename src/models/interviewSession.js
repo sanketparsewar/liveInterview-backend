@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const interviewSessionSchem = mongoose.Schema(
   {
+    interviewerName: {
+      type: String,
+    },
     candidateName: {
       type: String,
       required: true,
