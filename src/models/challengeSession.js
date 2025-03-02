@@ -18,7 +18,7 @@ const challengeSessionSchema = mongoose.Schema(
     },
     challengeSessionStatus: {
       type: String,
-      enum: ["In-progress", "Completed"]
+      enum: ["In-progress", "Completed"],
     },
     score: {
       type: String,
@@ -35,15 +35,18 @@ const challengeSessionSchema = mongoose.Schema(
       type: Date,
       default: null,
     },
-    totalTime:{
+    totalTime: {
       type: Number,
-    }
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const ChallengeSession = mongoose.model("ChallengeSession", challengeSessionSchema);
+const ChallengeSession = mongoose.model(
+  "ChallengeSession",
+  challengeSessionSchema
+);
 
 module.exports = ChallengeSession;
