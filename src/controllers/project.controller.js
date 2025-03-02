@@ -22,7 +22,7 @@ exports.getAllProjects = async (req, res) => {
     if (!projects) {
       return res.status(404).json({ message: "No projects found" });
     }
-    res.status(200).json({ projects });
+    res.status(200).json( projects);
   } catch (error) {
     res.status(404).json({ message: "No projects found" });
   }
