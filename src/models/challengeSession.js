@@ -38,9 +38,6 @@ const challengeSessionSchema = mongoose.Schema(
     totalTime: {
       type: Number,
     },
-    project:{
-      type:String,
-    },
     warnings:{
       type: Number,
       default: 0
