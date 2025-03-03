@@ -7,11 +7,19 @@ exports.createChallengeSession = async (req, res) => {
     if (!interviewSessionId || !stackBlitzUrl || !name) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+    const existingChallengeSession = await ChallengeSession.findOne({
+      interviewSessionId,
+      stackBlitzUrl,
+    });
+    if (existingChallengeSession) {
+      return res.status(409).json({ message: "Challenge session already exists" });
+    }
+
     const newChallengeSession = new ChallengeSession(req.body);
     await newChallengeSession.save();
     res.status(201).json(newChallengeSession);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
