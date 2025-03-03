@@ -3,7 +3,7 @@ const InterviewSession = require("../models/interviewSession");
 // Endpoint to create a new interviewSession
 exports.createInterviewSession = async (req, res) => {
   try {
-    const { interviewerName,candidateName } = req.body;
+    const { interviewerName, candidateName } = req.body;
     if (!interviewerName | !candidateName) {
       return res.status(400).json({ message: "Missing required fields" });
     }

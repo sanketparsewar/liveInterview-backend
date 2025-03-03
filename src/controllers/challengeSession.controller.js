@@ -4,18 +4,27 @@ const ChallengeSession = require("../models/challengeSession");
 exports.createChallengeSession = async (req, res) => {
   try {
     const { interviewSessionId, stackBlitzUrl, name } = req.body;
-    if (!interviewSessionId || !stackBlitzUrl || !name) {
+    if (!interviewSessionId || !stackBlitzUrl || !name ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
+
+    // Modify the StackBlitz URL to use 'fork' instead of 'edit'
+    const modifiedStackBlitzUrl = stackBlitzUrl.replace('/edit/', '/fork/');
+
     const existingChallengeSession = await ChallengeSession.findOne({
       interviewSessionId,
-      stackBlitzUrl,
+      stackBlitzUrl: modifiedStackBlitzUrl,
     });
     if (existingChallengeSession) {
       return res.status(409).json({ message: "Challenge session already exists" });
     }
 
-    const newChallengeSession = new ChallengeSession(req.body);
+    // Create a new challenge session with the modified URL
+    const newChallengeSession = new ChallengeSession({
+      ...req.body,
+      stackBlitzUrl: modifiedStackBlitzUrl,
+    });
+
     await newChallengeSession.save();
     res.status(201).json(newChallengeSession);
   } catch (error) {
