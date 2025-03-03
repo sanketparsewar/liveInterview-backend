@@ -4,7 +4,7 @@ const ChallengeSession = require("../models/challengeSession");
 exports.createChallengeSession = async (req, res) => {
   try {
     const { interviewSessionId, stackBlitzUrl, name } = req.body;
-    if (!interviewSessionId || !stackBlitzUrl || !name ) {
+    if (!interviewSessionId || !stackBlitzUrl || !name) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
