@@ -54,7 +54,7 @@ exports.updateProjectById = async (req, res) => {
     }
     res.status(200).json({ project: updatedProject });
   } catch (error) {
-    res.status(500).json({ message: "Error: " + error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
