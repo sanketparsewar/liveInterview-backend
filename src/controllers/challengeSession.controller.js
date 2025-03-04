@@ -123,11 +123,6 @@ exports.startChallenge = async (req, res) => {
 exports.updateChallengeSessionStatus = async (req, res) => {
   try {
 
-    // const challengeSession = await ChallengeSession.findByIdAndUpdate(
-    //   req.params.id,
-    //   { isActive: false, challengeSessionStatus: "Completed", endTime: Date.now() },
-    //   { new: true }
-    // );
     const challengeSession = await ChallengeSession.findById(req.params.id);
 
     if (!challengeSession) {
@@ -135,7 +130,14 @@ exports.updateChallengeSessionStatus = async (req, res) => {
     }
 
     const endTime = Date.now();
-    const totalTime = (endTime - challengeSession.startTime) / (1000 * 60); // Convert ms to seconds
+    // const totalTime = (endTime - challengeSession.startTime) / (1000 * 60); // Convert ms to seconds
+    const totalMilliseconds = endTime - challengeSession.startTime;
+    const totalMinutes = Math.floor(totalMilliseconds / (1000 * 60));
+    const remainingSeconds = Math.floor((totalMilliseconds % (1000 * 60)) / 1000);
+
+    const formattedTime = `${totalMinutes}.${remainingSeconds}`;
+    // console.log(formattedTime);
+
 
     const updatedSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
@@ -143,7 +145,7 @@ exports.updateChallengeSessionStatus = async (req, res) => {
         isActive: false,
         challengeSessionStatus: "Completed",
         endTime: endTime,
-        totalTime: totalTime, // Store time in minutes
+        totalTime: formattedTime, // Store time in minutes
       },
       { new: true }
     );
