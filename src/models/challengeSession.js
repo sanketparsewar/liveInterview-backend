@@ -14,8 +14,8 @@ const challengeSessionSchema = mongoose.Schema(
     stackBlitzUrl: {
       type: String,
       required: true,
-      unique: true,
     },
+    
     challengeSessionStatus: {
       type: String,
       enum: ["In-progress", "Completed"],
@@ -38,7 +38,7 @@ const challengeSessionSchema = mongoose.Schema(
     totalTime: {
       type: Number,
     },
-    warnings:{
+    warnings: {
       type: Number,
       default: 0
     }
