@@ -43,7 +43,7 @@ exports.getInterviewSessionById = async (req, res) => {
     if (!interviewSession) {
       return res.status(404).json({ message: "InterviewSession not found" });
     }
-    res.status(200).json({ interviewSession });
+    res.status(200).json( interviewSession );
   } catch (error) {
     res.status(404).json({ message: "No interviewSessions found" });
   }
