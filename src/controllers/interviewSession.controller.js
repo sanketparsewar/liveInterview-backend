@@ -26,7 +26,8 @@ exports.createInterviewSession = async (req, res) => {
 // Endpoint to get all interviewSessions
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    const interviewSessions = await InterviewSession.find().sort({ createdAt: -1 });
+    const interviewerName=req.query.interviewerName;
+    const interviewSessions = await InterviewSession.find({interviewerName}).sort({ createdAt: -1 });
     if (!interviewSessions) {
       return res.status(404).json({ message: "No interviewSessions found" });
     }
