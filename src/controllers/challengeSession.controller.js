@@ -122,7 +122,7 @@ exports.startChallenge = async (req, res) => {
 
 exports.updateChallengeSessionStatus = async (req, res) => {
   try {
-
+    // const {stackBlitzUrl} = req.body
     const challengeSession = await ChallengeSession.findById(req.params.id);
 
     if (!challengeSession) {
