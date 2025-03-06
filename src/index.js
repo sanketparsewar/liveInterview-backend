@@ -30,7 +30,7 @@ app.use("/api/project", projectRoutes);
 
 
 io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+    // console.log("User connected:", socket.id);
 
     // here data is the data send during emiting
     socket.on("startChallenge", () => {
@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
+        // console.log("User disconnected:", socket.id);
     });
 });
 
