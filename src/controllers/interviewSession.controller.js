@@ -1,3 +1,4 @@
+const ChallengeSession = require("../models/challengeSession");
 const InterviewSession = require("../models/interviewSession");
 
 // Endpoint to create a new interviewSession
@@ -59,7 +60,6 @@ exports.getAllInterviewSessions = async (req, res) => {
     const interviewSessions = await InterviewSession.find(filter)
       .sort(sorting)
 
-    console.log(interviewSessions);
 
     res.status(200).json({ interviewSessions });
   } catch (error) {
@@ -128,12 +128,15 @@ exports.updateInterviewSessionStatus = async (req, res) => {
 // Endpoint to delete a specific interviewSession by ID
 exports.deleteInterviewSessionById = async (req, res) => {
   try {
-    const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
+   const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
       req.params.id
     );
+
     if (!deletedInterviewSession) {
       return res.status(404).json({ message: "InterviewSession not found" });
     }
+    await ChallengeSession.deleteMany({ interviewSessionId: req.params.id });
+
     res.status(200).json({ message: "InterviewSession deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });

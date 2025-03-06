@@ -9,14 +9,16 @@ exports.createChallengeSession = async (req, res) => {
     }
 
     // Modify the StackBlitz URL
-    const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
+    // const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
 
     const newChallengeSession = new ChallengeSession({
       ...req.body,
-      stackBlitzUrl: modifiedStackBlitzUrl,
+      // stackBlitzUrl: modifiedStackBlitzUrl,import sdk from '@stackblitz/sdk';
+
     });
 
     await newChallengeSession.save();
+    console.log(newChallengeSession)
     res.status(201).json(newChallengeSession);
   } catch (error) {
     res.status(500).json({ message: error.message });
