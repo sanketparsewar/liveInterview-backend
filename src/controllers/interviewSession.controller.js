@@ -8,7 +8,7 @@ exports.createInterviewSession = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
     const existingInterviewSession = await InterviewSession.findOne({
-      candidateName:{ $regex: `^${candidateName}$`, $options: "i" },
+      candidateName: { $regex: `^${candidateName}$`, $options: "i" },
     });
     if (existingInterviewSession) {
       return res
@@ -16,7 +16,7 @@ exports.createInterviewSession = async (req, res) => {
         .json({ message: "Interview session already exists" });
     }
     const newInterviewSession = new InterviewSession(req.body);
-    
+
     await newInterviewSession.save();
     res.status(201).json({ newInterviewSession });
   } catch (error) {
@@ -27,11 +27,40 @@ exports.createInterviewSession = async (req, res) => {
 // Endpoint to get all interviewSessions
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    const interviewerName=req.query.interviewerName;
-    const interviewSessions = await InterviewSession.find({interviewerName}).sort({ createdAt: -1 });
-    if (!interviewSessions) {
-      return res.status(404).json({ message: "No interviewSessions found" });
+    const { interviewerName, sortBy = "newest", search } = req.query;
+
+    let filter = {};
+    if (interviewerName) {
+      filter.interviewerName = interviewerName;
     }
+
+    if (search) {
+      filter.$or = [
+        { candidateName: { $regex: search, $options: "i" } }, // Case-insensitive search by name
+      ];
+    }
+
+    let sorting = {};
+
+    // Handle sorting based on selected option
+    if (sortBy) {
+      if (sortBy === "newest") {
+        sorting["createdAt"] = -1; // Newest first
+      } else if (sortBy === "oldest") {
+        sorting["createdAt"] = 1; // Oldest first
+      } else if (sortBy === "asc") {
+        sorting["candidateName"] = 1; // A to Z
+      } else if (sortBy === "desc") {
+        sorting["candidateName"] = -1; // Z to A
+      }
+    }
+    console.log(filter);
+
+    const interviewSessions = await InterviewSession.find(filter)
+      .sort(sorting)
+
+    console.log(interviewSessions);
+
     res.status(200).json({ interviewSessions });
   } catch (error) {
     res.status(404).json({ message: "No interviewSessions found" });
@@ -45,7 +74,7 @@ exports.getInterviewSessionById = async (req, res) => {
     if (!interviewSession) {
       return res.status(404).json({ message: "InterviewSession not found" });
     }
-    res.status(200).json( interviewSession );
+    res.status(200).json(interviewSession);
   } catch (error) {
     res.status(404).json({ message: "No interviewSessions found" });
   }
