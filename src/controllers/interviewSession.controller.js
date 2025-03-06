@@ -8,7 +8,7 @@ exports.createInterviewSession = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
     const existingInterviewSession = await InterviewSession.findOne({
-      candidateName,
+      candidateName:{ $regex: `^${candidateName}$`, $options: "i" },
     });
     if (existingInterviewSession) {
       return res
@@ -16,6 +16,7 @@ exports.createInterviewSession = async (req, res) => {
         .json({ message: "Interview session already exists" });
     }
     const newInterviewSession = new InterviewSession(req.body);
+    
     await newInterviewSession.save();
     res.status(201).json({ newInterviewSession });
   } catch (error) {
