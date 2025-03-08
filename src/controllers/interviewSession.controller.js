@@ -55,7 +55,7 @@ exports.getAllInterviewSessions = async (req, res) => {
         sorting["candidateName"] = -1; // Z to A
       }
     }
-    console.log(filter);
+    // console.log(filter);
 
     const interviewSessions = await InterviewSession.find(filter)
       .sort(sorting)

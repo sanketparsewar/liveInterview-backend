@@ -1,6 +1,5 @@
 const ChallengeSession = require("../models/challengeSession");
 
-// Endpoint to create a new challengeSession
 exports.createChallengeSession = async (req, res) => {
   try {
     const { interviewSessionId, stackBlitzUrl, name } = req.body;
@@ -9,22 +8,19 @@ exports.createChallengeSession = async (req, res) => {
     }
 
     // Modify the StackBlitz URL
-    // const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
-
+    const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
     const newChallengeSession = new ChallengeSession({
       ...req.body,
-      // stackBlitzUrl: modifiedStackBlitzUrl,import sdk from '@stackblitz/sdk';
+      stackBlitzUrl: modifiedStackBlitzUrl,
 
     });
 
     await newChallengeSession.save();
-    console.log(newChallengeSession)
     res.status(201).json(newChallengeSession);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Endpoint to get all challengeSessions
 exports.getAllChallengeSessions = async (req, res) => {
