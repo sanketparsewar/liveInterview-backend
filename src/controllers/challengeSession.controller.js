@@ -8,11 +8,9 @@ exports.createChallengeSession = async (req, res) => {
     }
 
     // Modify the StackBlitz URL
-    const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
+    // const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
     const newChallengeSession = new ChallengeSession({
       ...req.body,
-      stackBlitzUrl: modifiedStackBlitzUrl,
-
     });
 
     await newChallengeSession.save();
@@ -78,6 +76,7 @@ exports.getChallengeSessionsByInterviewId = async (req, res) => {
 // Endpoint to update a specific challengeSession by ID
 exports.updateChallengeSessionById = async (req, res) => {
   try {
+    console.log(req.body)
     const updatedChallengeSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
       req.body,
