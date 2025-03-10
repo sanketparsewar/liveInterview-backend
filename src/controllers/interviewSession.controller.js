@@ -28,7 +28,12 @@ exports.createInterviewSession = async (req, res) => {
 // Endpoint to get all interviewSessions
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    const { interviewerName, sortBy = "newest", search } = req.query;
+    let { interviewerName, sortBy = "newest", search, limit, page } = req.query;
+
+    limit = parseInt(limit);
+    page = parseInt(page);
+    let skip = (page - 1) * limit;
+
 
     let filter = {};
     if (interviewerName) {
@@ -57,11 +62,29 @@ exports.getAllInterviewSessions = async (req, res) => {
     }
     // console.log(filter);
 
-    const interviewSessions = await InterviewSession.find(filter)
-      .sort(sorting)
+    let interviewSessions = await InterviewSession.find(filter)
+      .sort(sorting).limit(limit)
+      .skip(skip);
 
 
-    res.status(200).json({ interviewSessions });
+    if (interviewSessions.length === 0 && page > 1) {
+      page = page - 1
+      skip = (page - 1) * limit;
+      interviewSessions = await InterviewSession.find(filter)
+        .sort(sorting)
+        .limit(limit)
+        .skip(skip);
+    }
+
+    const totalInterviewSessions = await InterviewSession.countDocuments(filter); // Get total count for pagination
+
+
+
+    res.status(200).json({
+      interviewSessions, totalInterviewSessions,
+      totalPages: Math.ceil(totalInterviewSessions / limit),
+      currentPage: page,
+    });
   } catch (error) {
     res.status(404).json({ message: "No interviewSessions found" });
   }
@@ -128,7 +151,7 @@ exports.updateInterviewSessionStatus = async (req, res) => {
 // Endpoint to delete a specific interviewSession by ID
 exports.deleteInterviewSessionById = async (req, res) => {
   try {
-   const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
+    const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
       req.params.id
     );
 
