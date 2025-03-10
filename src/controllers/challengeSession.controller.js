@@ -76,7 +76,6 @@ exports.getChallengeSessionsByInterviewId = async (req, res) => {
 // Endpoint to update a specific challengeSession by ID
 exports.updateChallengeSessionById = async (req, res) => {
   try {
-    console.log(req.body)
     const updatedChallengeSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -133,7 +132,6 @@ exports.updateChallengeSessionStatus = async (req, res) => {
     const remainingSeconds = Math.floor((totalMilliseconds % (1000 * 60)) / 1000);
 
     const formattedTime = `${totalMinutes}.${remainingSeconds}`;
-    // console.log(formattedTime);
 
 
     const updatedSession = await ChallengeSession.findByIdAndUpdate(
