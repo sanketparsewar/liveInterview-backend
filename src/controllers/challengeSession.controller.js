@@ -7,8 +7,6 @@ exports.createChallengeSession = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Modify the StackBlitz URL
-    // const modifiedStackBlitzUrl = stackBlitzUrl.replace("edit", "fork");
     const newChallengeSession = new ChallengeSession({
       ...req.body,
     });
@@ -39,16 +37,6 @@ exports.getAllChallengeSessions = async (req, res) => {
 exports.getChallengeSessionById = async (req, res) => {
   try {
     const challengeSession = await ChallengeSession.findById(req.params.id);
-
-    if (!challengeSession) {
-      return res.status(404).json({ message: "Challenge session not found" });
-    }
-
-    if (!challengeSession.isActive) {
-      const filteredChallengeSession = await ChallengeSession.findById(req.params.id)
-        .select("-stackBlitzUrl");
-      return res.status(200).json(filteredChallengeSession);
-    }
 
     if (!challengeSession) {
       return res.status(404).json({ message: "ChallengeSession not found" });
