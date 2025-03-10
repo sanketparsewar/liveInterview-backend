@@ -15,7 +15,10 @@ const challengeSessionSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    
+    projectSnapshot:{
+      type: Object,
+      default: {},
+    },
     challengeSessionStatus: {
       type: String,
       enum: ["In-progress", "Completed"],
