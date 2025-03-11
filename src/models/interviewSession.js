@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 
 const interviewSessionSchem = mongoose.Schema(
   {
-    interviewerName: {
+    interviewer: {
+      type: String,
+    },
+    organization: {
       type: String,
     },
     candidateName: {
