@@ -18,7 +18,6 @@ exports.createChallengeSession = async (req, res) => {
   }
 };
 
-// Endpoint to get all challengeSessions
 exports.getAllChallengeSessions = async (req, res) => {
   try {
     const challengeSessions = await ChallengeSession.find().populate(
@@ -33,7 +32,6 @@ exports.getAllChallengeSessions = async (req, res) => {
   }
 };
 
-// Endpoint to get a specific challengeSession by ID
 exports.getChallengeSessionById = async (req, res) => {
   try {
     const challengeSession = await ChallengeSession.findById(req.params.id);
@@ -61,7 +59,6 @@ exports.getChallengeSessionsByInterviewId = async (req, res) => {
   }
 };
 
-// Endpoint to update a specific challengeSession by ID
 exports.updateChallengeSessionById = async (req, res) => {
   try {
     const updatedChallengeSession = await ChallengeSession.findByIdAndUpdate(

@@ -1,11 +1,10 @@
 const ChallengeSession = require("../models/challengeSession");
 const InterviewSession = require("../models/interviewSession");
 
-// Endpoint to create a new interviewSession
 exports.createInterviewSession = async (req, res) => {
   try {
-    const { interviewerName, candidateName } = req.body;
-    if (!interviewerName | !candidateName) {
+    const { interviewer,organization, candidateName } = req.body;
+    if (!interviewer | !organization | !candidateName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
     const existingInterviewSession = await InterviewSession.findOne({
@@ -25,24 +24,22 @@ exports.createInterviewSession = async (req, res) => {
   }
 };
 
-// Endpoint to get all interviewSessions
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    let { interviewerName, sortBy = "newest", search, limit, page } = req.query;
-
+    let { interviewer, sortBy = "newest", search, limit, page } = req.query;
     limit = parseInt(limit);
     page = parseInt(page);
     let skip = (page - 1) * limit;
 
 
     let filter = {};
-    if (interviewerName) {
-      filter.interviewerName = interviewerName;
+    if (interviewer) {
+      filter.interviewer = interviewer;
     }
 
     if (search) {
       filter.$or = [
-        { candidateName: { $regex: search, $options: "i" } }, // Case-insensitive search by name
+        { candidateName: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -75,9 +72,7 @@ exports.getAllInterviewSessions = async (req, res) => {
         .skip(skip);
     }
 
-    const totalInterviewSessions = await InterviewSession.countDocuments(filter); // Get total count for pagination
-
-
+    const totalInterviewSessions = await InterviewSession.countDocuments(filter); 
 
     res.status(200).json({
       interviewSessions, totalInterviewSessions,
@@ -89,7 +84,6 @@ exports.getAllInterviewSessions = async (req, res) => {
   }
 };
 
-// Endpoint to get a specific interviewSession by ID
 exports.getInterviewSessionById = async (req, res) => {
   try {
     const interviewSession = await InterviewSession.findById(req.params.id);
@@ -102,7 +96,6 @@ exports.getInterviewSessionById = async (req, res) => {
   }
 };
 
-// Endpoint to update a specific interviewSession by ID
 exports.updateInterviewSessionById = async (req, res) => {
   try {
     const updatedInterviewSession = await InterviewSession.findByIdAndUpdate(
@@ -147,7 +140,6 @@ exports.updateInterviewSessionStatus = async (req, res) => {
   }
 };
 
-// Endpoint to delete a specific interviewSession by ID
 exports.deleteInterviewSessionById = async (req, res) => {
   try {
     const deletedInterviewSession = await InterviewSession.findByIdAndDelete(
