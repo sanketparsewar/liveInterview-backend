@@ -42,6 +42,9 @@ io.on("connection", (socket) => {
     socket.on("endChallenge", () => {
         io.emit("challengeEnded"); 
     });
+    socket.on("saveCode", () => {
+        io.emit("codeSaved"); 
+    });
 
     socket.on("disconnect", () => {
         // console.log("User disconnected:", socket.id);
