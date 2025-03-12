@@ -108,7 +108,7 @@ exports.updateInterviewSessionById = async (req, res) => {
     }
     res.status(200).json({ interviewSession: updatedInterviewSession });
   } catch (error) {
-    res.status(500).json({ message: "Error: " + error.message });
+    res.status(500).json({ message:error.message });
   }
 };
 
