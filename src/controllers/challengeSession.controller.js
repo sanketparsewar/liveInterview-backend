@@ -71,9 +71,29 @@ exports.updateChallengeSessionById = async (req, res) => {
     }
     res.status(200).json({ challengeSession: updatedChallengeSession });
   } catch (error) {
-    res.status(500).json({ message: "Error: " + error.message });
+    res.status(500).json({ message:error.message });
   }
 };
+
+exports.updateLostFocus= async (req,res)=>{
+  try {
+    const challengeSession = await ChallengeSession.findById(req.params.id);
+    const updatedChallengeSession = await ChallengeSession.findByIdAndUpdate(
+      req.params.id,
+      { lostFocus: challengeSession.lostFocus+1 },
+      { new: true }
+    );
+
+    if (!updatedChallengeSession) {
+      return res.status(404).json({ message: "ChallengeSession not found" });
+    }
+    console.log(updatedChallengeSession)
+    res.status(200).json(updatedChallengeSession );
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 
 exports.startChallenge = async (req, res) => {
   try {
@@ -111,17 +131,15 @@ exports.updateChallengeSessionStatus = async (req, res) => {
     }
 
     const endTime = Date.now();
-    // const totalTime = (endTime - challengeSession.startTime) / (1000 * 60); // Convert ms to seconds
     const totalMilliseconds = endTime - challengeSession.startTime;
     const totalMinutes = Math.floor(totalMilliseconds / (1000 * 60));
     const remainingSeconds = Math.floor((totalMilliseconds % (1000 * 60)) / 1000);
 
     const formattedTime = `${totalMinutes}.${remainingSeconds}`;
 
-
     const updatedSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
-      {
+      { 
         isActive: false,
         challengeSessionStatus: "Completed",
         endTime: endTime,

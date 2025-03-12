@@ -41,7 +41,7 @@ const challengeSessionSchema = mongoose.Schema(
     totalTime: {
       type: Number,
     },
-    warnings: {
+    lostFocus: {
       type: Number,
       default: 0
     }
