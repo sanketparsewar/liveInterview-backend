@@ -2,8 +2,8 @@ const ChallengeSession = require("../models/challengeSession");
 
 exports.createChallengeSession = async (req, res) => {
   try {
-    const { interviewSessionId, stackBlitzUrl, name } = req.body;
-    if (!interviewSessionId || !stackBlitzUrl || !name) {
+    const { interviewSessionId, stackBlitzUrl, name,projectName } = req.body;
+    if (!interviewSessionId || !stackBlitzUrl || !name || !projectName) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -71,16 +71,16 @@ exports.updateChallengeSessionById = async (req, res) => {
     }
     res.status(200).json({ challengeSession: updatedChallengeSession });
   } catch (error) {
-    res.status(500).json({ message:error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.updateLostFocus= async (req,res)=>{
+exports.updateLostFocus = async (req, res) => {
   try {
     const challengeSession = await ChallengeSession.findById(req.params.id);
     const updatedChallengeSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
-      { lostFocus: challengeSession.lostFocus+1 },
+      { lostFocus: challengeSession.lostFocus + 1 },
       { new: true }
     );
 
@@ -88,7 +88,7 @@ exports.updateLostFocus= async (req,res)=>{
       return res.status(404).json({ message: "ChallengeSession not found" });
     }
     // console.log(updatedChallengeSession)
-    res.status(200).json(updatedChallengeSession );
+    res.status(200).json(updatedChallengeSession);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -132,14 +132,16 @@ exports.updateChallengeSessionStatus = async (req, res) => {
 
     const endTime = Date.now();
     const totalMilliseconds = endTime - challengeSession.startTime;
-    const totalMinutes = Math.floor(totalMilliseconds / (1000 * 60));
-    const remainingSeconds = Math.floor((totalMilliseconds % (1000 * 60)) / 1000);
+    const totalSeconds = Math.floor(totalMilliseconds / 1000); // Get total elapsed seconds
+    const totalMinutes = Math.floor(totalSeconds / 60); // Convert to minutes
+    const remainingSeconds = totalSeconds % 60; // Get leftover seconds
 
     const formattedTime = `${totalMinutes}.${remainingSeconds}`;
 
+
     const updatedSession = await ChallengeSession.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         isActive: false,
         challengeSessionStatus: "Completed",
         endTime: endTime,
