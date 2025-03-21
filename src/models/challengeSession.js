@@ -11,6 +11,10 @@ const challengeSessionSchema = mongoose.Schema(
       ref: "InterviewSession",
       required: true,
     },
+    projectName:{
+      type: String,
+      required: true,
+    },
     stackBlitzUrl: {
       type: String,
       required: true,
