@@ -87,7 +87,6 @@ exports.updateLostFocus = async (req, res) => {
     if (!updatedChallengeSession) {
       return res.status(404).json({ message: "ChallengeSession not found" });
     }
-    // console.log(updatedChallengeSession)
     res.status(200).json(updatedChallengeSession);
   } catch (error) {
     res.status(500).json({ message: error.message });
