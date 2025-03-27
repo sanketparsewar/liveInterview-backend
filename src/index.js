@@ -11,6 +11,8 @@ const reportRoutes = require("./routes/report.routes");
 const cors = require("cors");
 const app = express();
 
+const challengeRooms = {};
+
 // database connection
 dbConnection();
 
@@ -48,7 +50,11 @@ io.on("connection", (socket) => {
     socket.on('offer', (offer) => {
         socket.broadcast.emit('offer', offer);
     });
-
+    socket.on("stream", ({ challengeId, frame }) => {
+        // if (challengeRooms[challengeId]) {
+            io.emit("getStream", frame);
+        // }
+    });
     socket.on('answer', (answer) => {
         socket.broadcast.emit('answer', answer);
     });
