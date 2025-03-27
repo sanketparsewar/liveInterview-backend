@@ -70,9 +70,9 @@ const createSocketServer = (server) => {
         });
 
         socket.on("stream", ({ challengeId, frame }) => {
-            if (challengeRooms[challengeId]) {
+            // if (challengeRooms[challengeId]) {
                 io.to(challengeId).emit("getStream", frame);
-            }
+            // }
         });
 
         // socket.on("candidateDisconnect", ({ challengeId, candidateId }) => {
