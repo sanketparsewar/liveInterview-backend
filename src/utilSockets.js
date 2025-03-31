@@ -23,7 +23,15 @@ const createSocketServer = (server) => {
         socket.on("saveCode", () => {
             io.emit("codeSaved");
         });
-        
+
+        socket.on('userJoined', (data) => {
+            console.log('User joined:', data);
+            socket.broadcast.emit('userJoined', { challengeId: data.challengeId }); // Broadcast to others, not sender
+          });
+          
+
+
+
         socket.on("joinChallenge", ({ challengeId, role, candidateId }) => {
             console.log(`Join request: ${challengeId} - Role: ${role}`);
 
@@ -71,7 +79,7 @@ const createSocketServer = (server) => {
 
         socket.on("stream", ({ challengeId, frame }) => {
             // if (challengeRooms[challengeId]) {
-                io.to(challengeId).emit("getStream", frame);
+            io.emit("getStream", frame);
             // }
         });
 
