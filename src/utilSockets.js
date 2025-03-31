@@ -25,57 +25,57 @@ const createSocketServer = (server) => {
         });
 
         socket.on('userJoined', (data) => {
-            console.log('User joined:', data);
+            // console.log('User joined:', data);
             socket.broadcast.emit('userJoined', { challengeId: data.challengeId }); // Broadcast to others, not sender
           });
           
 
 
 
-        socket.on("joinChallenge", ({ challengeId, role, candidateId }) => {
-            console.log(`Join request: ${challengeId} - Role: ${role}`);
+        // socket.on("joinChallenge", ({ challengeId, role, candidateId }) => {
+        //     console.log(`Join request: ${challengeId} - Role: ${role}`);
 
-            if (!challengeRooms[challengeId]) {
-                challengeRooms[challengeId] = {
-                    interviewers: [],
-                    candidate: null,
-                };
-            }
+        //     if (!challengeRooms[challengeId]) {
+        //         challengeRooms[challengeId] = {
+        //             interviewers: [],
+        //             candidate: null,
+        //         };
+        //     }
 
-            const room = challengeRooms[challengeId];
+        //     const room = challengeRooms[challengeId];
 
-            if (role === "interviewer") {
-                if (!room.interviewers.includes(socket.id)) {
-                    room.interviewers.push(socket.id);
-                    socket.join(challengeId);
-                    console.log(
-                        `Interviewer ${socket.id} joined challenge ${challengeId}`
-                    );
-                    io.to(challengeId).emit("userJoined", { role, socketId: socket.id });
-                }
-            } else if (role === "candidate") {
-                console.log(`Candidate ID: ${candidateId}`);
-                if (room.candidate && candidateId !== room.candidate) {
-                    socket.emit("error", "Candidate already joined!");
-                    return;
-                }
-                room.candidate = candidateId;
-                console.log(`Room Candidate ID: ${room.candidate}`);
+        //     if (role === "interviewer") {
+        //         if (!room.interviewers.includes(socket.id)) {
+        //             room.interviewers.push(socket.id);
+        //             socket.join(challengeId);
+        //             console.log(
+        //                 `Interviewer ${socket.id} joined challenge ${challengeId}`
+        //             );
+        //             io.to(challengeId).emit("userJoined", { role, socketId: socket.id });
+        //         }
+        //     } else if (role === "candidate") {
+        //         console.log(`Candidate ID: ${candidateId}`);
+        //         if (room.candidate && candidateId !== room.candidate) {
+        //             socket.emit("error", "Candidate already joined!");
+        //             return;
+        //         }
+        //         room.candidate = candidateId;
+        //         console.log(`Room Candidate ID: ${room.candidate}`);
 
-                socketToCandidateMap.set(socket.id, room.candidate);
-                socket.join(challengeId);
-                console.log(
-                    `Candidate ${room.candidate} joined challenge ${challengeId}`
-                );
-                io.to(challengeId).emit("userJoined", {
-                    role,
-                    candidateId: room.candidate,
-                });
-            } else {
-                socket.emit("error", "Invalid role specified!");
-                console.log(`Invalid role '${role}' for challenge ${challengeId}`);
-            }
-        });
+        //         socketToCandidateMap.set(socket.id, room.candidate);
+        //         socket.join(challengeId);
+        //         console.log(
+        //             `Candidate ${room.candidate} joined challenge ${challengeId}`
+        //         );
+        //         io.to(challengeId).emit("userJoined", {
+        //             role,
+        //             candidateId: room.candidate,
+        //         });
+        //     } else {
+        //         socket.emit("error", "Invalid role specified!");
+        //         console.log(`Invalid role '${role}' for challenge ${challengeId}`);
+        //     }
+        // });
 
         socket.on("stream", ({ challengeId, frame }) => {
             // if (challengeRooms[challengeId]) {
