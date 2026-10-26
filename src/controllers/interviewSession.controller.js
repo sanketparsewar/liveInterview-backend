@@ -1,21 +1,37 @@
 const ChallengeSession = require("../models/challengeSession");
 const InterviewSession = require("../models/interviewSession");
+const User = require("../models/user");
+const mongoose = require("mongoose");
 
 exports.createInterviewSession = async (req, res) => {
   try {
-    const { interviewer,organization, candidateName } = req.body;
-    if (!interviewer | !organization | !candidateName) {
-      return res.status(400).json({ message: "Missing required fields" });
+    let { interviewer, organization, candidateName } = req.body;
+    if (!interviewer || !candidateName) {
+      return res.status(400).json({ message: "Missing required fields: interviewer and candidateName are required" });
     }
+
+    if (!organization) {
+      if (interviewer && mongoose.Types.ObjectId.isValid(interviewer)) {
+        const user = await User.findById(interviewer);
+        organization = user?.organization || "LiveInterview";
+      } else {
+        organization = "LiveInterview";
+      }
+    }
+
     const existingInterviewSession = await InterviewSession.findOne({
       candidateName: { $regex: `^${candidateName}$`, $options: "i" },
+      interviewer: interviewer,
     });
     if (existingInterviewSession) {
       return res
         .status(400)
         .json({ message: "Interview session already exists" });
     }
-    const newInterviewSession = new InterviewSession(req.body);
+    const newInterviewSession = new InterviewSession({
+      ...req.body,
+      organization,
+    });
 
     await newInterviewSession.save();
     res.status(201).json({ newInterviewSession });
@@ -26,9 +42,9 @@ exports.createInterviewSession = async (req, res) => {
 
 exports.getAllInterviewSessions = async (req, res) => {
   try {
-    let { interviewer, sortBy = "newest", search, limit, page } = req.query;
-    limit = parseInt(limit);
-    page = parseInt(page);
+    let { interviewer, sortBy = "newest", search, limit = 10, page = 1 } = req.query;
+    limit = parseInt(limit) || 10;
+    page = parseInt(page) || 1;
     let skip = (page - 1) * limit;
 
 
